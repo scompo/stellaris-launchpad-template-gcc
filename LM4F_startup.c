@@ -54,26 +54,26 @@ void hardfault_handler(unsigned int * hardfault_args) ;
 //-----------------------------------------------------------------------------
 
 // defined by the linker it's the stack top variable (End of ram)
-extern unsigned long _stack_top;
+extern unsigned long _estack;
 // defined by the liker, this are just start and end marker for each section.
 // .text (code)
-extern unsigned long _start_text;
-extern unsigned long _end_text;
+extern unsigned long _stext;
+extern unsigned long _etext;
 // .data (data to be copied on ram)
-extern unsigned long _start_data;
-extern unsigned long _end_data;
+extern unsigned long _sdata;
+extern unsigned long _edata;
 // .bss (uninitialized data to set to 0);
-extern unsigned long _start_bss;
-extern unsigned long _end_bss;
+extern unsigned long _sbss;
+extern unsigned long _ebss;
 
 // NVIC ISR table
 // the funny looking void(* myvectors[])(void) basically it's a way to make cc accept an array of function pointers.
-__attribute__ ((section(".nvic_table")))
+__attribute__ ((section(".isr_vector")))
 void(* myvectors[])(void) = {
   // This are the fixed priority interrupts and the stack pointer loaded at startup at R13 (SP).
   //                        VECTOR N (Check Datasheet)
   // here the compiler it's boring.. have to figure that out
-    (void (*)) &_stack_top, 
+    (void (*)) &_estack, 
                 // stack pointer should be 
               // placed here at startup.      0
     rst_handler,      // code entry point         1
@@ -255,18 +255,19 @@ void rst_handler(void){
   unsigned long *dest;
 
   //this should be good!
-  src = &_end_text;
-  dest = &_start_data;
+  src = &_etext;
+  
+  dest = &_sdata;
 
   //this too
-    while(dest < &_end_data)
+    while(dest < &_edata)
     {
         *dest++ = *src++;
     }
 
     // now set the .bss segment to 0!
-    dest = &_start_bss;
-  while(dest < &_end_bss){
+    dest = &_sbss;
+  while(dest < &_ebss){
     *dest++ = 0;
   }
 

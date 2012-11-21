@@ -32,9 +32,6 @@
 #undef errno
 extern int errno;
 
-extern unsigned int _HEAP_START;
-extern unsigned int _HEAP_END;
-static caddr_t heap = NULL ;
 
 /*
  environ
@@ -80,7 +77,6 @@ int _fork() {
  The `sys/stat.h' header file required is distributed in the `include' subdirectory for this C library.
  */
 int _fstat(int file, struct stat *st) {
-    UARTprintf("_fstat\n");
     st->st_mode = S_IFCHR;
     return 0;
 }
@@ -99,7 +95,6 @@ int _getpid() {
  Query whether output stream is a terminal. For consistency with the other minimal implementations,
  */
 int _isatty(int file) {
-    UARTprintf("_isatty\n");
     switch (file){
     case STDOUT_FILENO:
     case STDERR_FILENO:
@@ -147,29 +142,27 @@ int _lseek(int file, int ptr, int dir) {
  Increase program data space.
  Malloc and related functions depend on this
  */
-caddr_t _sbrk(int increment) {
-  UARTprintf("_sbrk");
+caddr_t _sbrk(int incr) {
+  extern char _end; // Defined in linkerscript, end of .data and .bss
 
-  caddr_t prevHeap, nextHeap;
+  static char *heap_end;
+  char *prev_heap_end;
+  extern char _estack;
+  extern char _sstack;
 
-  if (heap == NULL)
+  if (heap_end == NULL) {
+    heap_end = &_end;
+  }
+  prev_heap_end = heap_end;
+  if((((uint32_t)heap_end) + ((uint32_t)incr))
+      > ((uint32_t)&_sstack)) // stack protection
   {
-    heap = (caddr_t)&_HEAP_START;
+    errno = ENOMEM;
+    return (void*) -1;
   }
 
-  prevHeap = heap;
-  nextHeap = (caddr_t)(((unsigned int)(heap + increment) + 7) & ~7);
-  register caddr_t stackPtr __asm ("sp");
-
-  if ( (nextHeap > stackPtr) || 
-      (nextHeap >= (caddr_t)&_HEAP_END))
-  {
-    return NULL; // error - no more memory
-  } else
-  {
-    heap = nextHeap;
-    return (caddr_t) prevHeap;
-  }
+  heap_end += incr;
+  return (void*) prev_heap_end;
 
 }
 
@@ -184,7 +177,6 @@ int _read(int file, char *ptr, int len) {
     int n;
     int num = 0;
     char c;
-    UARTprintf("_read");
 
     switch (file) {
     case STDIN_FILENO:
@@ -251,7 +243,6 @@ int _wait(int *status) {
 int _write(int file, char *ptr, int len) {
     int n;
 
-    UARTprintf("_write\n");
 
     switch (file) {
     case STDOUT_FILENO: /*stdout*/
