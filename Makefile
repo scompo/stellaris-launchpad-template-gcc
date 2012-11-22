@@ -43,7 +43,7 @@ CPU=-mcpu=cortex-m4
 FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 
 # Stellarisware path
-STELLARISWARE_PATH=~/stellaris/stellaris/
+STELLARISWARE_PATH=~/stellaris/stellarisware/
 
 # Program name definition for ARM GNU C compiler.
 CC      = ${PREFIX_ARM}-gcc
@@ -72,13 +72,16 @@ ODFLAGS = -S
 # I can get them from the gcc frontend, using some options.
 # See gcc documentation
 LIB_GCC_PATH=${shell ${CC} ${CFLAGS} -print-libgcc-file-name}
-LIBC_PATH=${shell ${CC} ${CFLAGS} -print-file-name=libc.a}
-LIBM_PATH=${shell ${CC} ${CFLAGS} -print-file-name=libm.a}
+#LIBC_PATH=${shell ${CC} ${CFLAGS} -print-file-name=libc.a}
+#LIBM_PATH=${shell ${CC} ${CFLAGS} -print-file-name=libm.a}
+LIBC_PATH=/home/cypher/stellaris/newlib/arm-none-eabi/lib/thumb2/libc.a
+LIBM_PATH=/home/cypher/stellaris/newlib/arm-none-eabi/lib/thumb2/libm.a
+
 
 # Uploader tool path.
 # Set a relative or absolute path to the upload tool program.
 # I used this project: https://github.com/utzig/lm4tools
-FLASHER=~/stellaris/lm4tools/lm4flash/lm4flash
+FLASHER=lm4flash
 # Flags for the uploader program.
 FLASHER_FLAGS=
 
