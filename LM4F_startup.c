@@ -294,7 +294,7 @@ void rst_handler(void){
 
 // NMI Exception handler code NVIC 2
 void nmi_handler(void){
-  UARTprintf("NMI Exception\n");
+  printf("NMI Exception\n");
   // Just loop forever, so if you want to debug the processor it's running.
     while(1){
     }
@@ -324,27 +324,27 @@ void hardfault_handler( unsigned int * hardfault_args ){
   stacked_pc = ((unsigned long) hardfault_args[6]);
   stacked_psr = ((unsigned long) hardfault_args[7]);
  
-  UARTprintf ("\n\n[Hard fault handler - all numbers in hex]\n");
-  UARTprintf ("R0 = %x\n", stacked_r0);
-  UARTprintf ("R1 = %x\n", stacked_r1);
-  UARTprintf ("R2 = %x\n", stacked_r2);
-  UARTprintf ("R3 = %x\n", stacked_r3);
-  UARTprintf ("R12 = %x\n", stacked_r12);
-  UARTprintf ("LR [R14] = %x  subroutine call return address\n", stacked_lr);
-  UARTprintf ("PC [R15] = %x  program counter\n", stacked_pc);
-  UARTprintf ("PSR = %x\n", stacked_psr);
-  UARTprintf ("BFAR = %x\n", (*((volatile unsigned long *)(0xE000ED38))));
-  UARTprintf ("CFSR = %x\n", (*((volatile unsigned long *)(0xE000ED28))));
-  UARTprintf ("HFSR = %x\n", (*((volatile unsigned long *)(0xE000ED2C))));
-  UARTprintf ("DFSR = %x\n", (*((volatile unsigned long *)(0xE000ED30))));
-  UARTprintf ("AFSR = %x\n", (*((volatile unsigned long *)(0xE000ED3C))));
+  printf ("\n\n[Hard fault handler - all numbers in hex]\n");
+  printf ("R0 = %x\n", stacked_r0);
+  printf ("R1 = %x\n", stacked_r1);
+  printf ("R2 = %x\n", stacked_r2);
+  printf ("R3 = %x\n", stacked_r3);
+  printf ("R12 = %x\n", stacked_r12);
+  printf ("LR [R14] = %x  subroutine call return address\n", stacked_lr);
+  printf ("PC [R15] = %x  program counter\n", stacked_pc);
+  printf ("PSR = %x\n", stacked_psr);
+  printf ("BFAR = %x\n", (*((volatile unsigned long *)(0xE000ED38))));
+  printf ("CFSR = %x\n", (*((volatile unsigned long *)(0xE000ED28))));
+  printf ("HFSR = %x\n", (*((volatile unsigned long *)(0xE000ED2C))));
+  printf ("DFSR = %x\n", (*((volatile unsigned long *)(0xE000ED30))));
+  printf ("AFSR = %x\n", (*((volatile unsigned long *)(0xE000ED3C))));
   while (1) { }; 
 }
 
 // Empty handler used as default.
 void empty_def_handler(void){
   // Just loop forever, so if you want to debug the processor it's running.
-    UARTprintf("UNKNOWN Exception\n");
+    printf("UNKNOWN Exception\n");
     while(1){
     }
 }
